@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"net/http/httputil"
 	"strings"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 )
 
 var port = flag.Int("port", 8080, "Port to listen on")
+var showbody = flag.Bool("body", true, "Output body?")
 
 func main() {
 	iniflags.SetConfigFile(".settings")
@@ -38,8 +40,8 @@ func provideData(w http.ResponseWriter, r *http.Request) {
 	if r.URL.String() == "/favicon.ico" {
 		return
 	}
-	console.Always(fmt.Sprintf("URL: %s", r.URL))
-	console.Always(r.Body)
+	out, _ := httputil.DumpRequest(r, *showbody)
+	console.Always(string(out))
 }
 
 func ServeConent(bindport int, p chan int) {
